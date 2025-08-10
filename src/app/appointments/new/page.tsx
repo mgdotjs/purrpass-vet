@@ -9,6 +9,7 @@ import { FormInput, FormSelect, FormTextarea } from '@/components/ui/form-compon
 import { appointmentSchema, type AppointmentFormData } from '@/utils/validation';
 import { ArrowLeft, Calendar, Save } from 'lucide-react';
 import Link from 'next/link';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 
 // Mock data - normally would come from API
 const mockPets = [
@@ -43,175 +44,151 @@ export default function NewAppointmentPage() {
 
   const onSubmit = async (data: AppointmentFormData) => {
     try {
-      // Convert date to ISO string
       const appointmentData = {
         ...data,
         appointmentDate: new Date(data.appointmentDate).toISOString(),
-        // Only include type-specific fields
         vaccineType: data.type === 'VACCINATION' ? data.vaccineType : undefined,
         treatmentType: data.type === 'TREATMENT' ? data.treatmentType : undefined,
         surgeryType: data.type === 'SURGERY' ? data.surgeryType : undefined,
       };
-      
+
       await createAppointment.mutateAsync(appointmentData);
     } catch (error) {
-      console.error('Appointment creation error:', error);
+      console.error('Error creating appointment:', error);
     }
   };
 
-  // Get minimum date (tomorrow)
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().slice(0, 16);
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-2xl mx-auto p-6">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Link href="/appointments">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Geri
-            </Button>
+    <DashboardLayout 
+      title="Yeni Randevu" 
+      description="Hayvanınız için yeni randevu oluşturun"
+    >
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-6">
+          <Link 
+            href="/appointments" 
+            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Randevulara Dön
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <Calendar className="w-8 h-8" />
-              Yeni Randevu
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Pet için yeni bir randevu oluşturun
-            </p>
-          </div>
         </div>
 
-        {/* Form */}
         <Card className="dark:bg-gray-800 dark:border-gray-700">
           <CardHeader>
-            <CardTitle className="dark:text-white">Randevu Bilgileri</CardTitle>
+            <CardTitle className="flex items-center space-x-2 dark:text-white">
+              <Calendar className="w-5 h-5 text-blue-600" />
+              <span>Randevu Bilgileri</span>
+            </CardTitle>
             <CardDescription className="dark:text-gray-400">
-              Randevu detaylarını doldurun
+              Lütfen randevu detaylarını doldurun
             </CardDescription>
           </CardHeader>
-          
           <CardContent>
             <FormProvider {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                {/* Pet Selection */}
                 <FormSelect
                   name="petId"
-                  label="Pet Seçimi"
-                  placeholder="Pet seçin..."
+                  label="Hayvan Seçin"
                   options={mockPets}
+                  placeholder="Hayvanınızı seçin..."
                   required
                 />
 
-                {/* Appointment Type */}
                 <FormSelect
                   name="type"
-                  label="Randevu Tipi"
-                  placeholder="Randevu tipi seçin..."
+                  label="Randevu Türü"
                   options={appointmentTypes}
                   required
                 />
 
-                {/* Title */}
                 <FormInput
                   name="title"
-                  label="Başlık"
-                  placeholder="Örn: Yıllık Genel Sağlık Kontrolü"
+                  type="text"
+                  label="Randevu Başlığı"
+                  placeholder="Örn: Rutin kontrol"
                   required
                 />
 
-                {/* Date & Time */}
                 <FormInput
                   name="appointmentDate"
-                  label="Randevu Tarihi ve Saati"
                   type="datetime-local"
-                  min={minDate}
+                  label="Randevu Tarihi ve Saati"
                   required
                 />
 
-                {/* Type-specific fields */}
                 {selectedType === 'VACCINATION' && (
                   <FormInput
                     name="vaccineType"
-                    label="Aşı Tipi"
-                    placeholder="Örn: İç parazit, Kuduz, DHPP"
-                    required
-                  />
-                )}
-
-                {selectedType === 'SURGERY' && (
-                  <FormInput
-                    name="surgeryType"
-                    label="Ameliyat Tipi"
-                    placeholder="Örn: Kısırlaştırma, Kırık tedavisi"
-                    required
+                    type="text"
+                    label="Aşı Türü"
+                    placeholder="Örn: Karma aşı, Kuduz aşısı"
                   />
                 )}
 
                 {selectedType === 'TREATMENT' && (
                   <FormInput
                     name="treatmentType"
-                    label="Tedavi Tipi"
-                    placeholder="Örn: Diş temizliği, Yara tedavisi"
-                    required
+                    type="text"
+                    label="Tedavi Türü"
+                    placeholder="Örn: Antibiyotik tedavisi"
                   />
                 )}
 
-                {/* Notes */}
+                {selectedType === 'SURGERY' && (
+                  <FormInput
+                    name="surgeryType"
+                    type="text"
+                    label="Ameliyat Türü"
+                    placeholder="Örn: Kısırlaştırma"
+                  />
+                )}
+
                 <FormTextarea
                   name="notes"
-                  label="Notlar (İsteğe bağlı)"
-                  placeholder="Randevu hakkında ek bilgiler..."
+                  label="Notlar (Opsiyonel)"
+                  placeholder="Ek bilgiler veya özel notlar..."
                   rows={4}
                 />
 
-                {/* Submit Button */}
-                <div className="flex gap-3">
-                  <Link href="/appointments" className="flex-1">
-                    <Button type="button" variant="outline" className="w-full">
+                <div className="flex justify-end space-x-4">
+                  <Link href="/appointments">
+                    <Button variant="outline">
                       İptal
                     </Button>
                   </Link>
                   <Button 
                     type="submit" 
                     disabled={createAppointment.isPending}
-                    className="flex-1"
+                    className="flex items-center space-x-2"
                   >
-                    {createAppointment.isPending ? (
-                      <>
-                        <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                        Oluşturuluyor...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4 mr-2" />
-                        Randevu Oluştur
-                      </>
-                    )}
+                    <Save className="w-4 h-4" />
+                    <span>
+                      {createAppointment.isPending ? 'Kaydediliyor...' : 'Randevu Oluştur'}
+                    </span>
                   </Button>
                 </div>
+
+                {createAppointment.isSuccess && (
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-green-800 text-sm">
+                      ✅ Randevu başarıyla oluşturuldu!
+                    </p>
+                  </div>
+                )}
+
+                {createAppointment.isError && (
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-800 text-sm">
+                      ❌ Randevu oluşturulurken hata oluştu. Lütfen tekrar deneyin.
+                    </p>
+                  </div>
+                )}
               </form>
             </FormProvider>
           </CardContent>
         </Card>
-
-        {/* Help Text */}
-        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-          <h3 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">
-            Randevu Oluşturma İpuçları
-          </h3>
-          <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
-            <li>• Randevu tarihini en az 1 gün önceden ayarlayın</li>
-            <li>• Aşı randevularında aşı tipini belirtmeyi unutmayın</li>
-            <li>• Ameliyat randevularında ameliyat detaylarını not bölümüne yazın</li>
-            <li>• Acil durumlar için doğrudan klinik ile iletişime geçin</li>
-          </ul>
-        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

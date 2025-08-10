@@ -19,6 +19,7 @@ import {
   Activity
 } from 'lucide-react';
 import Link from 'next/link';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import type { AppointmentStatus } from '@/types/api';
 
 const statusConfig = {
@@ -107,57 +108,49 @@ export default function AppointmentsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-6"></div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
-              ))}
-            </div>
+      <DashboardLayout title="Randevular" description="Randevular yükleniyor...">
+        <div className="animate-pulse">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+            ))}
           </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Randevular yüklenirken hata oluştu
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Lütfen sayfayı yenileyin veya daha sonra tekrar deneyin.
-            </p>
-          </div>
+      <DashboardLayout title="Randevular" description="Hata oluştu">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Randevular yüklenirken hata oluştu
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Lütfen sayfayı yenileyin veya daha sonra tekrar deneyin.
+          </p>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto p-6">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Randevular
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Toplam {appointments.length} randevu
-            </p>
+    <DashboardLayout 
+      title="Randevular" 
+      description={`Toplam ${appointments.length} randevu`}
+    >
+      <div className="space-y-6">
+        {/* Header Actions */}
+        <div className="flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <Link href="/appointments/new">
+              <Button className="flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                Yeni Randevu
+              </Button>
+            </Link>
           </div>
-          <Link href="/appointments/new">
-            <Button className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Yeni Randevu
-            </Button>
-          </Link>
         </div>
 
         {/* Filter Tabs */}
@@ -318,6 +311,6 @@ export default function AppointmentsPage() {
           </div>
         )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
