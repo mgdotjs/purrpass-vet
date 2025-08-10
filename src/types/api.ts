@@ -79,7 +79,7 @@ export interface CompanyInfo {
   id?: string;
   userId?: string;
   companyName: string;
-  companyType: 'INDIVIDUAL' | 'CORPORATION';
+  companyType: 'INDIVIDUAL' | 'CORPORATE';
   taxOffice: string;
   taxNumber: string;
   cityId: number;

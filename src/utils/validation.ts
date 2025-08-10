@@ -103,7 +103,7 @@ export const companyInfoSchema = z.object({
     .min(1, 'Şirket adı gereklidir')
     .min(3, 'Şirket adı en az 3 karakter olmalıdır')
     .max(100, 'Şirket adı en fazla 100 karakter olabilir'),
-  companyType: z.enum(['INDIVIDUAL', 'CORPORATION'], {
+  companyType: z.enum(['INDIVIDUAL', 'CORPORATE'], {
     message: 'Şirket türü seçimi gereklidir',
   }),
   taxOffice: z
@@ -117,12 +117,12 @@ export const companyInfoSchema = z.object({
     .length(10, 'Vergi numarası 10 haneli olmalıdır')
     .regex(/^\d+$/, 'Vergi numarası sadece rakamlardan oluşmalıdır'),
   cityId: z
-    .number({
+    .string({
       message: 'İl seçimi gereklidir',
     })
     .min(1, 'Geçerli bir il seçin'),
   districtId: z
-    .number({
+    .string({
       message: 'İlçe seçimi gereklidir',
     })
     .min(1, 'Geçerli bir ilçe seçin'),
@@ -148,12 +148,12 @@ export const clinicInfoSchema = z.object({
     .min(1, 'Klinik telefonu gereklidir')
     .regex(/^\+90\d{10}$/, 'Telefon numarası +90XXXXXXXXXX formatında olmalıdır'),
   cityId: z
-    .number({
+    .string({
       message: 'İl seçimi gereklidir',
     })
     .min(1, 'Geçerli bir il seçin'),
   districtId: z
-    .number({
+    .string({
       message: 'İlçe seçimi gereklidir',
     })
     .min(1, 'Geçerli bir ilçe seçin'),

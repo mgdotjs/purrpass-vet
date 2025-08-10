@@ -147,18 +147,22 @@ export const useCompanyInfo = () => {
 };
 
 export const useSaveClinicInfo = () => {
-  const { updateOnboardingSteps } = useAuthStore();
+  const { updateOnboardingSteps, updateOnboardingStep } = useAuthStore();
   const router = useRouter();
   
   return useMutation({
     mutationFn: vetService.saveClinicInfo,
     onSuccess: () => {
+      // Update onboarding steps
       updateOnboardingSteps({
         EMAIL_VERIFICATION: true,
         PERSONAL_INFO: true,
         COMPANY_INFO: true,
         CLINIC_INFO: true,
       });
+      
+      // Update onboarding step to completed
+      updateOnboardingStep('COMPLETED');
       
       // Show success modal or redirect to dashboard
       router.push('/onboarding/success');

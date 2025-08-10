@@ -135,8 +135,7 @@ export function FormSelect({
   placeholder, 
   options, 
   wrapperClassName,
-  icon,
-  required = false
+  icon
 }: FormSelectProps) {
   const {
     setValue,
@@ -277,5 +276,146 @@ export function FormPassword({
         </button>
       )}
     </div>
+  );
+}
+
+// Form Searchable Select Component
+interface FormSearchableSelectProps {
+  name: string;
+  label?: string;
+  placeholder?: string;
+  options: { value: string; label: string }[];
+  wrapperClassName?: string;
+  searchPlaceholder?: string;
+  emptyMessage?: string;
+  required?: boolean;
+}
+
+export function FormSearchableSelect({ 
+  name, 
+  label, 
+  placeholder = "Seçiniz...", 
+  options, 
+  wrapperClassName,
+  searchPlaceholder = "Ara...",
+  emptyMessage = "Sonuç bulunamadı."
+}: FormSearchableSelectProps) {
+  const {
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext();
+
+  const [open, setOpen] = React.useState(false);
+  const [searchValue, setSearchValue] = React.useState("");
+
+  const value = watch(name);
+  const error = errors[name];
+
+  const filteredOptions = React.useMemo(() => {
+    if (!searchValue) return options;
+    return options.filter(option =>
+      option.label.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [options, searchValue]);
+
+  const selectedOption = options.find(option => option.value === value);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(`[data-searchable-select="${name}"]`)) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [open, name]);
+
+  return (
+    <FormField name={name} label={label} className={wrapperClassName}>
+      <div className="relative" data-searchable-select={name}>
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className={cn(
+            "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            error && "border-destructive",
+            !value && "text-muted-foreground"
+          )}
+        >
+          <span>{selectedOption ? selectedOption.label : placeholder}</span>
+          <svg
+            className="h-4 w-4 opacity-50"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+        
+        {open && (
+          <div className="absolute top-full left-0 right-0 z-50 mt-1 max-h-60 overflow-auto rounded-md border bg-background text-foreground shadow-lg">
+            <div className="flex items-center border-b px-3">
+              <svg
+                className="mr-2 h-4 w-4 shrink-0 opacity-50"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder={searchPlaceholder}
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+            </div>
+            <div className="max-h-48 overflow-auto">
+              {filteredOptions.length === 0 ? (
+                <div className="py-6 text-center text-sm text-muted-foreground">{emptyMessage}</div>
+              ) : (
+                filteredOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={cn(
+                      "relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
+                      value === option.value && "bg-accent text-accent-foreground"
+                    )}
+                    onClick={() => {
+                      setValue(name, option.value, { shouldValidate: true });
+                      setOpen(false);
+                      setSearchValue("");
+                    }}
+                  >
+                    <span>{option.label}</span>
+                    {value === option.value && (
+                      <svg
+                        className="ml-auto h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    )}
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </FormField>
   );
 }

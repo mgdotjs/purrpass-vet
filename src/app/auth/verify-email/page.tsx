@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSearchParams } from 'next/navigation';
@@ -14,7 +14,7 @@ import { Mail, Clock } from 'lucide-react';
 import { verifyEmailSchema, type VerifyEmailFormData } from '@/utils/validation';
 import { useState } from 'react';
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
   
@@ -157,5 +157,13 @@ export default function VerifyEmailPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

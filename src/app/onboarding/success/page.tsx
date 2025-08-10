@@ -2,21 +2,26 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, ArrowRight } from 'lucide-react';
 
 export default function OnboardingSuccessPage() {
   const router = useRouter();
+  const { updateOnboardingStep } = useAuthStore();
 
   useEffect(() => {
+    // Update onboarding step to completed when success page loads
+    updateOnboardingStep('COMPLETED');
+    
     // Auto redirect after 5 seconds
     const timer = setTimeout(() => {
       router.push('/dashboard');
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [router, updateOnboardingStep]);
 
   const handleContinue = () => {
     router.push('/dashboard');

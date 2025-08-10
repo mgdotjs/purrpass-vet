@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { User, OnboardingSteps } from '@/types/api';
+import type { User, OnboardingSteps, OnboardingStep } from '@/types/api';
 
 interface AuthState {
   user: User | null;
@@ -18,6 +18,8 @@ interface AuthActions {
   setLoading: (loading: boolean) => void;
   setHydrated: (hydrated: boolean) => void;
   updateOnboardingSteps: (steps: OnboardingSteps) => void;
+  updateOnboardingStep: (step: OnboardingStep) => void;
+  updateUser: (updates: Partial<User>) => void;
 }
 
 export const useAuthStore = create<AuthState & AuthActions>()(
@@ -84,11 +86,53 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       updateOnboardingSteps: (steps) => {
         const currentUser = get().user;
         if (currentUser) {
+          const updatedUser = {
+            ...currentUser,
+            steps
+          };
+          
+          // Update both localStorage and cookies
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          document.cookie = `user=${encodeURIComponent(JSON.stringify(updatedUser))}; path=/; max-age=${30 * 24 * 60 * 60}`;
+          
           set({
-            user: {
-              ...currentUser,
-              steps
-            }
+            user: updatedUser
+          });
+        }
+      },
+
+      updateOnboardingStep: (step) => {
+        const currentUser = get().user;
+        if (currentUser) {
+          const updatedUser = {
+            ...currentUser,
+            onboardingStep: step
+          };
+          
+          // Update both localStorage and cookies
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          document.cookie = `user=${encodeURIComponent(JSON.stringify(updatedUser))}; path=/; max-age=${30 * 24 * 60 * 60}`;
+          
+          set({
+            user: updatedUser
+          });
+        }
+      },
+
+      updateUser: (updates) => {
+        const currentUser = get().user;
+        if (currentUser) {
+          const updatedUser = {
+            ...currentUser,
+            ...updates
+          };
+          
+          // Update both localStorage and cookies
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          document.cookie = `user=${encodeURIComponent(JSON.stringify(updatedUser))}; path=/; max-age=${30 * 24 * 60 * 60}`;
+          
+          set({
+            user: updatedUser
           });
         }
       },

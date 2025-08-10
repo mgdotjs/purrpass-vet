@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,8 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { FormInput, FormSelect } from '@/components/ui/form-components';
+import { FormInput, FormSearchableSelect } from '@/components/ui/form-components';
 import { clinicInfoSchema, type ClinicInfoFormData } from '@/utils/validation';
+import { CITIES } from '@/constants/cities';
+import { DISTRICTS } from '@/constants/districts';
 import { Building } from 'lucide-react';
 
 export default function ClinicInfoPage() {
@@ -24,11 +26,14 @@ export default function ClinicInfoPage() {
       clinicName: '',
       clinicEmail: '',
       clinicPhone: '',
-      cityId: 34,
-      districtId: 1,
+      cityId: '',
+      districtId: '',
       address: '',
     },
   });
+
+  // Watch city selection to update districts
+  const selectedCityId = methods.watch('cityId');
 
   // Load existing data if available
   useEffect(() => {
@@ -38,37 +43,53 @@ export default function ClinicInfoPage() {
         clinicName: info.clinicName || '',
         clinicEmail: info.clinicEmail || '',
         clinicPhone: info.clinicPhone || '',
-        cityId: info.cityId || 34,
-        districtId: info.districtId || 1,
+        cityId: info.cityId?.toString() || '',
+        districtId: info.districtId?.toString() || '',
         address: info.address || '',
       });
     }
   }, [clinicInfo, methods]);
 
+  // Reset district when city changes
+  useEffect(() => {
+    if (selectedCityId) {
+      methods.setValue('districtId', '');
+    }
+  }, [selectedCityId, methods]);
+
   const onSubmit = async (data: ClinicInfoFormData) => {
     try {
-      await saveClinicInfoMutation.mutateAsync(data);
+      // Convert string IDs back to numbers for API
+      const submitData = {
+        ...data,
+        cityId: parseInt(data.cityId),
+        districtId: parseInt(data.districtId),
+      };
+      await saveClinicInfoMutation.mutateAsync(submitData);
       router.push('/onboarding/success');
     } catch (error) {
       console.error('Save clinic info error:', error);
     }
   };
 
-  const cityOptions = [
-    { value: '34', label: 'İstanbul' },
-    { value: '6', label: 'Ankara' },
-    { value: '35', label: 'İzmir' },
-    { value: '7', label: 'Antalya' },
-    { value: '16', label: 'Bursa' },
-  ];
+  // Convert cities to options format
+  const cityOptions = React.useMemo(() => 
+    CITIES.map(city => ({
+      value: city.id.toString(),
+      label: city.name
+    })), []);
 
-  const districtOptions = [
-    { value: '1', label: 'Kadıköy' },
-    { value: '2', label: 'Beyoğlu' },
-    { value: '3', label: 'Şişli' },
-    { value: '4', label: 'Beşiktaş' },
-    { value: '5', label: 'Üsküdar' },
-  ];
+  // Convert districts to options format based on selected city
+  const districtOptions = React.useMemo(() => {
+    if (!selectedCityId) return [];
+    
+    return DISTRICTS
+      .filter(district => district.provinceId === parseInt(selectedCityId))
+      .map(district => ({
+        value: district.id.toString(),
+        label: district.name
+      }));
+  }, [selectedCityId]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -116,18 +137,22 @@ export default function ClinicInfoPage() {
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormSelect
+                  <FormSearchableSelect
                     name="cityId"
                     label="İl"
-                    placeholder="İl seçin"
+                    placeholder="İl seçin..."
+                    searchPlaceholder="İl ara..."
                     options={cityOptions}
+                    emptyMessage="İl bulunamadı."
                   />
 
-                  <FormSelect
+                  <FormSearchableSelect
                     name="districtId"
                     label="İlçe"
-                    placeholder="İlçe seçin"
+                    placeholder="İlçe seçin..."
+                    searchPlaceholder="İlçe ara..."
                     options={districtOptions}
+                    emptyMessage="İlçe bulunamadı."
                   />
                 </div>
 
