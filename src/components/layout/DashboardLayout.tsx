@@ -39,13 +39,13 @@ const menuItems: MenuItem[] = [
     href: '/appointments',
     label: 'Randevular',
     icon: Calendar,
-    roles: ['VET', 'USER']
+    roles: ['VET']
   },
   {
     href: '/appointments/new',
     label: 'Randevu Oluştur',
     icon: Plus,
-    roles: ['VET', 'USER']
+    roles: ['VET']
   },
   {
     href: '/pets',

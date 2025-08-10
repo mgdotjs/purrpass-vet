@@ -243,8 +243,12 @@ export default function AppointmentsPage() {
                         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                           <User className="w-4 h-4" />
                           <span>{appointment.pet.owner.email}</span>
-                          <Phone className="w-4 h-4 ml-2" />
-                          <span>{appointment.pet.owner.userCode}</span>
+                          {appointment.pet.owner.userCode && (
+                            <>
+                              <Phone className="w-4 h-4 ml-2" />
+                              <span>{appointment.pet.owner.userCode}</span>
+                            </>
+                          )}
                         </div>
                       )}
 

@@ -30,6 +30,13 @@ export const API_ENDPOINTS = {
     BY_PET: (petId: string) => `/appointments/${petId}`,
     BY_ID: (id: string) => `/appointments/${id}`,
   },
+
+  // Pet endpoints
+  PETS: {
+    BASE: '/pets',
+    BY_ID: (id: string) => `/pets/${id}`,
+    MICROCHIP: (petId: string) => `/pets/${petId}/microchip`,
+  },
 } as const;
 
 export const ROLES = {

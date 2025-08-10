@@ -235,6 +235,96 @@ export const updateAppointmentSchema = z.object({
     .optional(),
 });
 
+// Pet Schemas
+export const petSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Pet adı gereklidir')
+    .min(2, 'Pet adı en az 2 karakter olmalıdır')
+    .max(50, 'Pet adı en fazla 50 karakter olabilir'),
+  type: z.enum(['DOG', 'CAT', 'BIRD', 'OTHER'], {
+    message: 'Geçerli bir pet türü seçin',
+  }),
+  breed: z
+    .string()
+    .min(1, 'Cins gereklidir')
+    .max(50, 'Cins en fazla 50 karakter olabilir'),
+  birthDate: z
+    .string()
+    .min(1, 'Doğum tarihi gereklidir')
+    .refine((date) => {
+      const selectedDate = new Date(date);
+      const today = new Date();
+      const minDate = new Date();
+      minDate.setFullYear(today.getFullYear() - 30); // Max 30 years old
+      
+      return selectedDate <= today && selectedDate >= minDate;
+    }, 'Geçerli bir doğum tarihi girin'),
+  gender: z.enum(['MALE', 'FEMALE'], {
+    message: 'Geçerli bir cinsiyet seçin',
+  }),
+  color: z
+    .string()
+    .min(1, 'Renk gereklidir')
+    .max(30, 'Renk en fazla 30 karakter olabilir'),
+  allergies: z
+    .string()
+    .max(200, 'Alerjiler en fazla 200 karakter olabilir')
+    .optional(),
+});
+
+export const updatePetSchema = z.object({
+  name: z
+    .string()
+    .min(2, 'Pet adı en az 2 karakter olmalıdır')
+    .max(50, 'Pet adı en fazla 50 karakter olabilir')
+    .optional(),
+  breed: z
+    .string()
+    .max(50, 'Cins en fazla 50 karakter olabilir')
+    .optional(),
+  birthDate: z
+    .string()
+    .refine((date) => {
+      if (!date) return true; // Optional field
+      const selectedDate = new Date(date);
+      const today = new Date();
+      const minDate = new Date();
+      minDate.setFullYear(today.getFullYear() - 30);
+      
+      return selectedDate <= today && selectedDate >= minDate;
+    }, 'Geçerli bir doğum tarihi girin')
+    .optional(),
+  color: z
+    .string()
+    .max(30, 'Renk en fazla 30 karakter olabilir')
+    .optional(),
+  allergies: z
+    .string()
+    .max(200, 'Alerjiler en fazla 200 karakter olabilir')
+    .optional(),
+});
+
+export const microchipSchema = z.object({
+  chipNumber: z
+    .string()
+    .min(1, 'Chip numarası gereklidir')
+    .min(10, 'Chip numarası en az 10 karakter olmalıdır')
+    .max(15, 'Chip numarası en fazla 15 karakter olabilir')
+    .regex(/^\d+$/, 'Chip numarası sadece rakamlardan oluşmalıdır'),
+  chipDate: z
+    .string()
+    .min(1, 'Chip takma tarihi gereklidir')
+    .refine((date) => {
+      const selectedDate = new Date(date);
+      const today = new Date();
+      const minDate = new Date();
+      minDate.setFullYear(today.getFullYear() - 20); // Max 20 years ago
+      
+      return selectedDate <= today && selectedDate >= minDate;
+    }, 'Geçerli bir chip takma tarihi girin'),
+});
+
 // Type exports for TypeScript
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
@@ -245,3 +335,6 @@ export type CompanyInfoFormData = z.infer<typeof companyInfoSchema>;
 export type ClinicInfoFormData = z.infer<typeof clinicInfoSchema>;
 export type AppointmentFormData = z.infer<typeof appointmentSchema>;
 export type UpdateAppointmentFormData = z.infer<typeof updateAppointmentSchema>;
+export type PetFormData = z.infer<typeof petSchema>;
+export type UpdatePetFormData = z.infer<typeof updatePetSchema>;
+export type MicrochipFormData = z.infer<typeof microchipSchema>;

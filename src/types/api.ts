@@ -11,6 +11,8 @@ export type OnboardingStep =
 export type AppointmentType = 'CHECKUP' | 'VACCINATION' | 'SURGERY' | 'TREATMENT';
 export type AppointmentStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
 export type PetType = 'DOG' | 'CAT' | 'BIRD' | 'OTHER';
+export type PetGender = 'MALE' | 'FEMALE';
+export type MedicalRecordType = 'CHECKUP' | 'VACCINATION' | 'SURGERY' | 'TREATMENT';
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -122,16 +124,92 @@ export interface OnboardingStatus {
 }
 
 // Pet types
+export interface MicrochipInfo {
+  id: string;
+  petId: string;
+  chipNumber: string;
+  chipDate: string;
+  veterinarianId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MedicalRecord {
+  id: string;
+  petId: string;
+  veterinarianId: string;
+  appointmentId: string;
+  type: MedicalRecordType;
+  title: string;
+  description: string;
+  diagnosis: string;
+  treatment: string;
+  medication: string;
+  notes: string;
+  recordDate: string;
+  nextVisitDate: string | null;
+  attachments: string | null;
+  createdAt: string;
+  updatedAt: string;
+  veterinarian?: {
+    id: string;
+    email: string;
+    vetPersonalInfo?: {
+      firstName: string;
+      lastName: string;
+    };
+    vetClinicInfo?: {
+      clinicName: string;
+    };
+  };
+}
+
+export interface PetOwner {
+  id: string;
+  email: string;
+  userCode?: string;
+  vetPersonalInfo?: null;
+}
+
 export interface Pet {
   id: string;
   name: string;
   type: PetType;
   breed: string;
-  owner?: {
-    id: string;
-    email: string;
-    userCode: string;
-  };
+  birthDate: string;
+  gender: PetGender;
+  color: string;
+  allergies: string | null;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+  owner?: PetOwner;
+  microchipInfo?: MicrochipInfo | null;
+  medicalRecords?: MedicalRecord[];
+}
+
+// Pet request types
+export interface CreatePetRequest {
+  name: string;
+  type: PetType;
+  breed: string;
+  birthDate: string;
+  gender: PetGender;
+  color: string;
+  allergies?: string;
+}
+
+export interface UpdatePetRequest {
+  name?: string;
+  breed?: string;
+  birthDate?: string;
+  color?: string;
+  allergies?: string;
+}
+
+export interface CreateMicrochipRequest {
+  chipNumber: string;
+  chipDate: string;
 }
 
 // Appointment types

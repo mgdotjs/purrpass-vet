@@ -16,6 +16,11 @@ import type {
   Appointment,
   CreateAppointmentRequest,
   UpdateAppointmentRequest,
+  Pet,
+  CreatePetRequest,
+  UpdatePetRequest,
+  CreateMicrochipRequest,
+  MicrochipInfo,
 } from '@/types/api';
 
 // Auth Services
@@ -118,6 +123,45 @@ export const appointmentService = {
   // Delete appointment
   deleteAppointment: async (id: string): Promise<ApiResponse<{ message: string }>> => {
     const response = await api.delete(API_ENDPOINTS.APPOINTMENTS.BY_ID(id));
+    return response.data;
+  },
+};
+
+// Pet Services (USER role only)
+export const petService = {
+  // Get all pets for current user
+  getPets: async (): Promise<ApiResponse<Pet[]>> => {
+    const response = await api.get(API_ENDPOINTS.PETS.BASE);
+    return response.data;
+  },
+
+  // Get pet by ID with medical records
+  getPetById: async (id: string): Promise<ApiResponse<Pet>> => {
+    const response = await api.get(API_ENDPOINTS.PETS.BY_ID(id));
+    return response.data;
+  },
+
+  // Create new pet
+  createPet: async (data: CreatePetRequest): Promise<ApiResponse<Pet>> => {
+    const response = await api.post(API_ENDPOINTS.PETS.BASE, data);
+    return response.data;
+  },
+
+  // Update pet
+  updatePet: async (id: string, data: UpdatePetRequest): Promise<ApiResponse<Pet>> => {
+    const response = await api.put(API_ENDPOINTS.PETS.BY_ID(id), data);
+    return response.data;
+  },
+
+  // Delete pet
+  deletePet: async (id: string): Promise<ApiResponse<{ message: string }>> => {
+    const response = await api.delete(API_ENDPOINTS.PETS.BY_ID(id));
+    return response.data;
+  },
+
+  // Add microchip to pet
+  addMicrochip: async (petId: string, data: CreateMicrochipRequest): Promise<ApiResponse<MicrochipInfo>> => {
+    const response = await api.post(API_ENDPOINTS.PETS.MICROCHIP(petId), data);
     return response.data;
   },
 };
