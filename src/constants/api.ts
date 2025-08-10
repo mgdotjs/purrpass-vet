@@ -12,6 +12,11 @@ export const API_ENDPOINTS = {
   
   // User endpoints
   USERS: {
+    USER: {
+      PERSONAL_INFO: '/users/user/personal-info',
+      PERSONAL: '/users/user/personal',
+      PROFILE: '/users/user/profile',
+    },
     VET: {
       ONBOARDING_STATUS: '/users/vet/onboarding-status',
       PROFILE: '/users/vet/profile',

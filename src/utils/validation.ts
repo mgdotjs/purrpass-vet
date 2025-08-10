@@ -103,6 +103,50 @@ export const personalInfoSchema = z.object({
   phone: phoneSchema,
 });
 
+// USER Personal Info Schema
+export const userPersonalInfoSchema = z.object({
+  firstName: z
+    .string()
+    .min(1, 'Ad gereklidir')
+    .min(2, 'Ad en az 2 karakter olmalıdır')
+    .max(50, 'Ad en fazla 50 karakter olabilir')
+    .regex(/^[a-zA-ZçğıöşüÇĞIİÖŞÜ\s]+$/, 'Ad sadece harflerden oluşmalıdır'),
+  lastName: z
+    .string()
+    .min(1, 'Soyad gereklidir')
+    .min(2, 'Soyad en az 2 karakter olmalıdır')
+    .max(50, 'Soyad en fazla 50 karakter olabilir')
+    .regex(/^[a-zA-ZçğıöşüÇĞIİÖŞÜ\s]+$/, 'Soyad sadece harflerden oluşmalıdır'),
+  birthDate: z
+    .string()
+    .min(1, 'Doğum tarihi gereklidir')
+    .refine((date) => {
+      const birthDate = new Date(date);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      return age >= 18 && age <= 100;
+    }, 'Yaş 18-100 arasında olmalıdır'),
+  gender: z.enum(['MALE', 'FEMALE'], {
+    message: 'Cinsiyet seçimi gereklidir',
+  }),
+  tcIdentityNo: z
+    .string()
+    .min(1, 'TC Kimlik No gereklidir')
+    .length(11, 'TC Kimlik No 11 haneli olmalıdır')
+    .regex(/^\d+$/, 'TC Kimlik No sadece rakamlardan oluşmalıdır'),
+  phone: phoneSchema,
+  cityId: z
+    .string({
+      message: 'İl seçimi gereklidir',
+    })
+    .min(1, 'Geçerli bir il seçin'),
+  districtId: z
+    .string({
+      message: 'İlçe seçimi gereklidir',
+    })
+    .min(1, 'Geçerli bir ilçe seçin'),
+});
+
 export const companyInfoSchema = z.object({
   companyName: z
     .string()
@@ -334,6 +378,7 @@ export type RegisterFormData = z.infer<typeof registerSchema>;
 export type VerifyEmailFormData = z.infer<typeof verifyEmailSchema>;
 export type ResendOtpFormData = z.infer<typeof resendOtpSchema>;
 export type PersonalInfoFormData = z.infer<typeof personalInfoSchema>;
+export type UserPersonalInfoFormData = z.infer<typeof userPersonalInfoSchema>;
 export type CompanyInfoFormData = z.infer<typeof companyInfoSchema>;
 export type ClinicInfoFormData = z.infer<typeof clinicInfoSchema>;
 export type AppointmentFormData = z.infer<typeof appointmentSchema>;

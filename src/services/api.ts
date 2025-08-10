@@ -9,6 +9,8 @@ import type {
   AuthResponse,
   User,
   OnboardingStatus,
+  UserProfile,
+  UserPersonalInfo,
   VetProfile,
   PersonalInfo,
   CompanyInfo,
@@ -47,6 +49,24 @@ export const authService = {
 
   me: async (): Promise<ApiResponse<{ user: User }>> => {
     const response = await api.get(API_ENDPOINTS.AUTH.ME);
+    return response.data;
+  },
+};
+
+// USER Services
+export const userService = {
+  getProfile: async (): Promise<ApiResponse<UserProfile>> => {
+    const response = await api.get(API_ENDPOINTS.USERS.USER.PROFILE);
+    return response.data;
+  },
+
+  savePersonalInfo: async (data: Omit<UserPersonalInfo, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<ApiResponse<null>> => {
+    const response = await api.post(API_ENDPOINTS.USERS.USER.PERSONAL_INFO, data);
+    return response.data;
+  },
+
+  getPersonalInfo: async (): Promise<ApiResponse<UserPersonalInfo>> => {
+    const response = await api.get(API_ENDPOINTS.USERS.USER.PERSONAL);
     return response.data;
   },
 };

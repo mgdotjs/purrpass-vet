@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { authService, vetService } from '@/services/api';
+import { authService, vetService, userService } from '@/services/api';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'next/navigation';
 import type {
@@ -34,7 +34,12 @@ export const useVerifyEmail = () => {
           router.push('/onboarding');
         }
       } else {
-        router.push('/dashboard');
+        // USER role - check if personal info is completed
+        if (user.onboardingStep === 'COMPLETED') {
+          router.push('/dashboard');
+        } else {
+          router.push('/onboarding/personal-info'); // Direct to personal info for users
+        }
       }
     },
   });
@@ -64,7 +69,12 @@ export const useLogin = () => {
           router.push('/onboarding');
         }
       } else {
-        router.push('/dashboard');
+        // USER role - check if personal info is completed
+        if (user.onboardingStep === 'COMPLETED') {
+          router.push('/dashboard');
+        } else {
+          router.push('/onboarding/personal-info'); // Direct to personal info for users
+        }
       }
     },
     onError: () => {
@@ -174,5 +184,36 @@ export const useClinicInfo = () => {
   return useQuery({
     queryKey: ['vet-clinic-info'],
     queryFn: () => vetService.getClinicInfo(),
+  });
+};
+
+// USER hooks
+export const useUserProfile = () => {
+  return useQuery({
+    queryKey: ['user-profile'],
+    queryFn: () => userService.getProfile(),
+  });
+};
+
+export const useSaveUserPersonalInfo = () => {
+  const { updateOnboardingStep } = useAuthStore();
+  const router = useRouter();
+  
+  return useMutation({
+    mutationFn: userService.savePersonalInfo,
+    onSuccess: () => {
+      // Update onboarding step to completed for USER
+      updateOnboardingStep('COMPLETED');
+      
+      // Redirect to dashboard
+      router.push('/dashboard');
+    },
+  });
+};
+
+export const useUserPersonalInfo = () => {
+  return useQuery({
+    queryKey: ['user-personal-info'],
+    queryFn: () => userService.getPersonalInfo(),
   });
 };

@@ -69,6 +69,32 @@ export interface LoginRequest {
   password: string;
 }
 
+// USER specific types
+export interface UserPersonalInfo {
+  id?: string;
+  userId?: string;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  gender: 'MALE' | 'FEMALE';
+  tcIdentityNo: string;
+  phone: PhoneNumber;
+  cityId: number;
+  districtId: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  role: Role;
+  onboardingStep: OnboardingStep;
+  userPersonalInfo?: UserPersonalInfo;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // VET specific types
 export interface PersonalInfo {
   id?: string;
