@@ -8,6 +8,10 @@ export type OnboardingStep =
   | 'CLINIC_INFO'
   | 'COMPLETED';
 
+export type AppointmentType = 'CHECKUP' | 'VACCINATION' | 'SURGERY' | 'TREATMENT';
+export type AppointmentStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
+export type PetType = 'DOG' | 'CAT' | 'BIRD' | 'OTHER';
+
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data: T;
@@ -115,4 +119,64 @@ export interface OnboardingStatus {
   currentStep: OnboardingStep;
   isComplete: boolean;
   steps: OnboardingSteps;
+}
+
+// Pet types
+export interface Pet {
+  id: string;
+  name: string;
+  type: PetType;
+  breed: string;
+  owner?: {
+    id: string;
+    email: string;
+    userCode: string;
+  };
+}
+
+// Appointment types
+export interface Appointment {
+  id: string;
+  petId: string;
+  veterinarianId: string;
+  type: AppointmentType;
+  title: string;
+  appointmentDate: string;
+  notes: string;
+  status: AppointmentStatus;
+  vaccineType?: string | null;
+  treatmentType?: string | null;
+  surgeryType?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  pet?: Pet;
+  veterinarian?: {
+    id: string;
+    email: string;
+    vetClinicInfo?: {
+      clinicName: string;
+      clinicPhone: string;
+    };
+  };
+  medicalRecords?: unknown[];
+}
+
+// Appointment request types
+export interface CreateAppointmentRequest {
+  petId: string;
+  type: AppointmentType;
+  title: string;
+  appointmentDate: string;
+  notes?: string;
+  vaccineType?: string;
+  treatmentType?: string;
+  surgeryType?: string;
+}
+
+export interface UpdateAppointmentRequest {
+  status?: AppointmentStatus;
+  notes?: string;
+  vaccineType?: string;
+  treatmentType?: string;
+  surgeryType?: string;
 }

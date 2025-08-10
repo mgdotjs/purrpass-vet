@@ -164,6 +164,77 @@ export const clinicInfoSchema = z.object({
     .max(200, 'Adres en fazla 200 karakter olabilir'),
 });
 
+// Appointment Schemas
+export const appointmentSchema = z.object({
+  petId: z.string().min(1, 'Pet seçimi gereklidir'),
+  type: z.enum(['CHECKUP', 'VACCINATION', 'SURGERY', 'TREATMENT'], {
+    message: 'Randevu tipi seçimi gereklidir',
+  }),
+  title: z
+    .string()
+    .min(1, 'Başlık gereklidir')
+    .min(3, 'Başlık en az 3 karakter olmalıdır')
+    .max(100, 'Başlık en fazla 100 karakter olabilir'),
+  appointmentDate: z
+    .string()
+    .min(1, 'Randevu tarihi gereklidir'),
+  notes: z
+    .string()
+    .max(500, 'Notlar en fazla 500 karakter olabilir')
+    .optional(),
+  vaccineType: z
+    .string()
+    .max(100, 'Aşı tipi en fazla 100 karakter olabilir')
+    .optional(),
+  treatmentType: z
+    .string()
+    .max(100, 'Tedavi tipi en fazla 100 karakter olabilir')
+    .optional(),
+  surgeryType: z
+    .string()
+    .max(100, 'Ameliyat tipi en fazla 100 karakter olabilir')
+    .optional(),
+}).refine((data) => {
+  // Vaccination appointments should have vaccineType
+  if (data.type === 'VACCINATION' && !data.vaccineType) {
+    return false;
+  }
+  // Surgery appointments should have surgeryType
+  if (data.type === 'SURGERY' && !data.surgeryType) {
+    return false;
+  }
+  // Treatment appointments should have treatmentType
+  if (data.type === 'TREATMENT' && !data.treatmentType) {
+    return false;
+  }
+  return true;
+}, {
+  message: 'Seçilen randevu tipine uygun ek bilgiler gereklidir',
+  path: ['type']
+});
+
+export const updateAppointmentSchema = z.object({
+  status: z.enum(['SCHEDULED', 'COMPLETED', 'CANCELLED'], {
+    message: 'Geçerli bir durum seçin',
+  }).optional(),
+  notes: z
+    .string()
+    .max(500, 'Notlar en fazla 500 karakter olabilir')
+    .optional(),
+  vaccineType: z
+    .string()
+    .max(100, 'Aşı tipi en fazla 100 karakter olabilir')
+    .optional(),
+  treatmentType: z
+    .string()
+    .max(100, 'Tedavi tipi en fazla 100 karakter olabilir')
+    .optional(),
+  surgeryType: z
+    .string()
+    .max(100, 'Ameliyat tipi en fazla 100 karakter olabilir')
+    .optional(),
+});
+
 // Type exports for TypeScript
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
@@ -172,3 +243,5 @@ export type ResendOtpFormData = z.infer<typeof resendOtpSchema>;
 export type PersonalInfoFormData = z.infer<typeof personalInfoSchema>;
 export type CompanyInfoFormData = z.infer<typeof companyInfoSchema>;
 export type ClinicInfoFormData = z.infer<typeof clinicInfoSchema>;
+export type AppointmentFormData = z.infer<typeof appointmentSchema>;
+export type UpdateAppointmentFormData = z.infer<typeof updateAppointmentSchema>;

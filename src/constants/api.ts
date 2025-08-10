@@ -23,6 +23,13 @@ export const API_ENDPOINTS = {
       CLINIC: '/users/vet/clinic',
     },
   },
+
+  // Appointment endpoints
+  APPOINTMENTS: {
+    BASE: '/appointments',
+    BY_PET: (petId: string) => `/appointments/${petId}`,
+    BY_ID: (id: string) => `/appointments/${id}`,
+  },
 } as const;
 
 export const ROLES = {
@@ -36,4 +43,24 @@ export const ONBOARDING_STEPS = {
   COMPANY_INFO: 'COMPANY_INFO',
   CLINIC_INFO: 'CLINIC_INFO',
   COMPLETED: 'COMPLETED',
+} as const;
+
+export const APPOINTMENT_TYPES = {
+  CHECKUP: 'CHECKUP',
+  VACCINATION: 'VACCINATION',
+  SURGERY: 'SURGERY',
+  TREATMENT: 'TREATMENT',
+} as const;
+
+export const APPOINTMENT_STATUS = {
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+} as const;
+
+export const PET_TYPES = {
+  DOG: 'DOG',
+  CAT: 'CAT',
+  BIRD: 'BIRD',
+  OTHER: 'OTHER',
 } as const;

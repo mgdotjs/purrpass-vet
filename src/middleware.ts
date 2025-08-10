@@ -18,6 +18,7 @@ const routes = {
   // Protected routes - require authentication
   protected: [
     '/dashboard',
+    '/appointments',
   ],
   
   // VET only routes - require VET role

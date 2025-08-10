@@ -13,6 +13,9 @@ import type {
   PersonalInfo,
   CompanyInfo,
   ClinicInfo,
+  Appointment,
+  CreateAppointmentRequest,
+  UpdateAppointmentRequest,
 } from '@/types/api';
 
 // Auth Services
@@ -82,6 +85,39 @@ export const vetService = {
 
   getClinicInfo: async (): Promise<ApiResponse<ClinicInfo>> => {
     const response = await api.get(API_ENDPOINTS.USERS.VET.CLINIC);
+    return response.data;
+  },
+};
+
+// Appointment Services
+export const appointmentService = {
+  // Get all appointments for the veterinarian
+  getAppointments: async (): Promise<ApiResponse<Appointment[]>> => {
+    const response = await api.get(API_ENDPOINTS.APPOINTMENTS.BASE);
+    return response.data;
+  },
+
+  // Get appointments for a specific pet
+  getAppointmentsByPet: async (petId: string): Promise<ApiResponse<Appointment[]>> => {
+    const response = await api.get(API_ENDPOINTS.APPOINTMENTS.BY_PET(petId));
+    return response.data;
+  },
+
+  // Create new appointment
+  createAppointment: async (data: CreateAppointmentRequest): Promise<ApiResponse<Appointment>> => {
+    const response = await api.post(API_ENDPOINTS.APPOINTMENTS.BASE, data);
+    return response.data;
+  },
+
+  // Update appointment
+  updateAppointment: async (id: string, data: UpdateAppointmentRequest): Promise<ApiResponse<Appointment>> => {
+    const response = await api.put(API_ENDPOINTS.APPOINTMENTS.BY_ID(id), data);
+    return response.data;
+  },
+
+  // Delete appointment
+  deleteAppointment: async (id: string): Promise<ApiResponse<{ message: string }>> => {
+    const response = await api.delete(API_ENDPOINTS.APPOINTMENTS.BY_ID(id));
     return response.data;
   },
 };
