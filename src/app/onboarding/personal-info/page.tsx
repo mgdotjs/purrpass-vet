@@ -10,7 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { FormInput, FormSelect } from '@/components/ui/form-components';
-import { User, Calendar, Phone, IdCard } from 'lucide-react';
+import { PhoneInputField } from '@/components/ui/phone-input';
+import { User, Calendar, IdCard } from 'lucide-react';
 import { personalInfoSchema, type PersonalInfoFormData } from '@/utils/validation';
 
 export default function PersonalInfoPage() {
@@ -24,7 +25,10 @@ export default function PersonalInfoPage() {
       birthDate: '',
       gender: 'MALE',
       tcIdentityNo: '',
-      phoneNumber: '',
+      phone: {
+        countryCode: 90,
+        number: '',
+      },
     },
   });
 
@@ -41,7 +45,7 @@ export default function PersonalInfoPage() {
         birthDate: info.birthDate ? info.birthDate.split('T')[0] : '',
         gender: info.gender || 'MALE',
         tcIdentityNo: info.tcIdentityNo || '',
-        phoneNumber: info.phoneNumber || '',
+        phone: info.phone || '',
       });
     }
   }, [personalInfo, form]);
@@ -127,12 +131,11 @@ export default function PersonalInfoPage() {
                   }}
                 />
 
-                <FormInput
-                  name="phoneNumber"
-                  label="Telefon Numarası *"
-                  type="tel"
-                  placeholder="+905551234567"
-                  icon={<Phone />}
+                <PhoneInputField
+                  name="phone"
+                  label="Telefon Numarası"
+                  placeholder="Telefon numarası girin"
+                  required
                 />
 
                 {savePersonalInfoMutation.isError && (

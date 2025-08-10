@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { FormInput, FormSearchableSelect } from '@/components/ui/form-components';
+import { PhoneInputField } from '@/components/ui/phone-input';
 import { clinicInfoSchema, type ClinicInfoFormData } from '@/utils/validation';
 import { CITIES } from '@/constants/cities';
 import { DISTRICTS } from '@/constants/districts';
@@ -25,7 +26,10 @@ export default function ClinicInfoPage() {
     defaultValues: {
       clinicName: '',
       clinicEmail: '',
-      clinicPhone: '',
+      clinicPhone: {
+        countryCode: 90,
+        number: '',
+      },
       cityId: '',
       districtId: '',
       address: '',
@@ -129,11 +133,11 @@ export default function ClinicInfoPage() {
                   placeholder="info@patiklinik.com"
                 />
 
-                <FormInput
+                <PhoneInputField
                   name="clinicPhone"
                   label="Klinik Telefonu"
-                  type="tel"
-                  placeholder="(212) 123 45 67"
+                  placeholder="Klinik telefon numarası"
+                  required
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,5 +1,14 @@
 import { z } from 'zod';
 
+// Phone number validation schema for structured format
+const phoneSchema = z.object({
+  countryCode: z.number().int().positive('Ülke kodu gereklidir'),
+  number: z
+    .string()
+    .min(1, 'Telefon numarası gereklidir')
+    .regex(/^\d{10}$/, 'Telefon numarası 10 haneli olmalıdır'),
+});
+
 // Auth Schemas
 export const loginSchema = z.object({
   email: z
@@ -91,10 +100,7 @@ export const personalInfoSchema = z.object({
     //   const check2 = (sum1 + sum2 + digits[9]) % 10;
     //   return check1 === digits[9] && check2 === digits[10];
     // }, 'Geçerli bir TC Kimlik No girin'),
-  phoneNumber: z
-    .string()
-    .min(1, 'Telefon numarası gereklidir')
-    .regex(/^\+90\d{10}$/, 'Telefon numarası +90XXXXXXXXXX formatında olmalıdır'),
+  phone: phoneSchema,
 });
 
 export const companyInfoSchema = z.object({
@@ -143,10 +149,7 @@ export const clinicInfoSchema = z.object({
     .string()
     .min(1, 'Klinik e-postası gereklidir')
     .email('Geçerli bir e-posta adresi girin'),
-  clinicPhone: z
-    .string()
-    .min(1, 'Klinik telefonu gereklidir')
-    .regex(/^\+90\d{10}$/, 'Telefon numarası +90XXXXXXXXXX formatında olmalıdır'),
+  clinicPhone: phoneSchema,
   cityId: z
     .string({
       message: 'İl seçimi gereklidir',

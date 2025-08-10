@@ -8,6 +8,12 @@ export type OnboardingStep =
   | 'CLINIC_INFO'
   | 'COMPLETED';
 
+// Phone number interface
+export interface PhoneNumber {
+  countryCode: number;
+  number: string;
+}
+
 export type AppointmentType = 'CHECKUP' | 'VACCINATION' | 'SURGERY' | 'TREATMENT';
 export type AppointmentStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
 export type PetType = 'DOG' | 'CAT' | 'BIRD' | 'OTHER';
@@ -72,7 +78,7 @@ export interface PersonalInfo {
   birthDate: string;
   gender: 'MALE' | 'FEMALE';
   tcIdentityNo: string;
-  phoneNumber: string;
+  phone: PhoneNumber;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -97,7 +103,7 @@ export interface ClinicInfo {
   clinicName: string;
   clinicPhoto?: string | null;
   clinicEmail: string;
-  clinicPhone: string;
+  clinicPhone: PhoneNumber;
   cityId: number;
   districtId: number;
   address: string;
